@@ -375,7 +375,7 @@
         _.mixin(Transport.prototype, {
             _fingerprint: function fingerprint(o) {
                 o = o || {};
-                return o.url + o.type + _.isString(o.data) ? o.data : $.param(o.data || {});
+                return o.url + o.type + (o.data && _.isString(o.data) ? o.data : $.param(o.data || {}));
             },
             _get: function(o, cb) {
                 var that = this, fingerprint, jqXhr;

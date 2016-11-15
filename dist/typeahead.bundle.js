@@ -375,7 +375,7 @@
         _.mixin(Transport.prototype, {
             _fingerprint: function fingerprint(o) {
                 o = o || {};
-                return o.url + o.type + _.isString(o.data) ? o.data : $.param(o.data || {});
+                return o.url + o.type + (o.data && _.isString(o.data) ? o.data : $.param(o.data || {}));
             },
             _get: function(o, cb) {
                 var that = this, fingerprint, jqXhr;
@@ -1377,7 +1377,11 @@
                 var childNode, TEXT_NODE_TYPE = 3;
                 for (var i = 0; i < el.childNodes.length; i++) {
                     childNode = el.childNodes[i];
-                    if (childNode.className !== o.ignoreHighlightClass) {
+                    var shouldSkipHightlight = false;
+                    if (o.ignoreHighlightClass) {
+                        shouldSkipHightlight = childNode.className === o.ignoreHighlightClass;
+                    }
+                    if (!shouldSkipHightlight) {
                         if (childNode.nodeType === TEXT_NODE_TYPE) {
                             i += hightlightTextNode(childNode) ? 1 : 0;
                         } else {
@@ -1839,6 +1843,7 @@
             }
             www.mixin(this);
             this.$node = $(o.node);
+            this.beforeSelect = o.beforeSelect;
             this.query = null;
             this.datasets = _.map(o.datasets, initializeDataset);
             function initializeDataset(oDataset) {
@@ -1849,7 +1854,13 @@
         }
         _.mixin(Menu.prototype, EventEmitter, {
             _onSelectableClick: function onSelectableClick($e) {
-                this.trigger("selectableClicked", $($e.currentTarget));
+                var selectItem = true;
+                if (this.beforeSelect) {
+                    selectItem = this.beforeSelect($e);
+                }
+                if (selectItem) {
+                    this.trigger("selectableClicked", $($e.currentTarget));
+                }
             },
             _onRendered: function onRendered(type, dataset, suggestions, async) {
                 this.$node.toggleClass(this.classes.empty, this._allDatasetsEmpty());
@@ -2341,7 +2352,8 @@
                     }, www);
                     menu = new MenuConstructor({
                         node: $menu,
-                        datasets: datasets
+                        datasets: datasets,
+                        beforeSelect: o.beforeSelectCallback
                     }, www);
                     typeahead = new Typeahead({
                         input: input,
