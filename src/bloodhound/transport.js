@@ -49,7 +49,8 @@ var Transport = (function() {
       o = o || {};
       //$.param(o.data || {}) crashes because it does not expect a single string value.
       //if o.data is string no need to call param
-      return o.url + o.type + _.isString(o.data) ? o.data : $.param(o.data || {});
+
+	  return o.url + o.type + (o.data &&_.isString(o.data) ? o.data : $.param(o.data || {}));
     },
 
     _get: function(o, cb) {
