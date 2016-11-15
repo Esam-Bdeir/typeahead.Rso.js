@@ -22,7 +22,7 @@ var Menu = (function() {
     www.mixin(this);
 
     this.$node = $(o.node);
-
+    this.beforeSelect = o.beforeSelect;
     // the latest query #update was called with
     this.query = null;
     this.datasets = _.map(o.datasets, initializeDataset);
@@ -43,7 +43,13 @@ var Menu = (function() {
     // ### event handlers
 
     _onSelectableClick: function onSelectableClick($e) {
-      this.trigger('selectableClicked', $($e.currentTarget));
+	    var selectItem = true;
+	    if(this.beforeSelect){
+		    selectItem = this.beforeSelect($e);
+	    }
+	    if(selectItem){
+		    this.trigger('selectableClicked', $($e.currentTarget));
+	    }
     },
 
     _onRendered: function onRendered(type, dataset, suggestions, async) {

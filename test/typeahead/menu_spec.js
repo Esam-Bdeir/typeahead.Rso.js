@@ -31,6 +31,24 @@ describe('Menu', function() {
 
       expect(spy).toHaveBeenCalled();
     });
+    it('if beforeSelect defined and return false, selectableClicked should not trigger', function() {
+		  var spy;
+		  var view = new Menu({ node: this.$node, datasets: [{}],beforeSelect:function(){return false;}}, www).bind();
+		  view.onSync('selectableClicked', spy = jasmine.createSpy());
+
+		  this.$node.find(www.selectors.selectable).first().click();
+
+		  expect(spy).not.toHaveBeenCalled();
+	});
+	  it('if beforeSelect defined and return true, selectableClicked should trigger', function() {
+		  var spy;
+		  var view = new Menu({ node: this.$node, datasets: [{}],beforeSelect:function(){return true;}}, www).bind();
+		  view.onSync('selectableClicked', spy = jasmine.createSpy());
+
+		  this.$node.find(www.selectors.selectable).first().click();
+
+		  expect(spy).toHaveBeenCalled();
+	  });
   });
 
   describe('when mouseover event is triggered on a selectable', function() {

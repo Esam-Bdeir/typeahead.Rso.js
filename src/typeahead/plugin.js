@@ -72,7 +72,8 @@
         input = new Input({ hint: $hint, input: $input, }, www);
         menu = new MenuConstructor({
           node: $menu,
-          datasets: datasets
+          datasets: datasets,
+	      beforeSelect:o.beforeSelectCallback
         }, www);
 
         typeahead = new Typeahead({
